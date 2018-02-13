@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>firstArray</key>
+	<array>
+		<string>get</string>
+		<string>check</string>
+		<string>upload</string>
+		<string>is</string>
+		<string>has</string>
+		<string>rest</string>
+	</array>
+	<key>secondArray</key>
+	<array>
+		<string>UserInfo</string>
+		<string>MediaInfo</string>
+		<string>ProFeature</string>
+		<string>Common</string>
+		<string>Info</string>
+		<string>Commis</string>
+	</array>
+	<key>thirdArray</key>
+	<array>
+		<string>With</string>
+		<string>And</string>
+		<string>From</string>
+		<string>To</string>
+		<string>In</string>
+		<string>Cost</string>
+	</array>
+	<key>forthArray</key>
+	<array>
+		<string>UserPk</string>
+		<string>Pk</string>
+		<string>MediaID</string>
+		<string>MaxID</string>
+		<string>Loaction</string>
+		<string>Username</string>
+	</array>
+	<key>fifthArray</key>
+	<array>
+		<string>Info</string>
+		<string>Count</string>
+		<string>Name</string>
+		<string>ID</string>
+		<string>Max</string>
+		<string>Mini</string>
+	</array>
+	<key>sixthArray</key>
+	<array>
+		<string>Success</string>
+		<string>Fail</string>
+		<string>Successfully</string>
+		<string>Down</string>
+		<string>Failed</string>
+		<string>Right</string>
+	</array>
+</dict>
+</plist>

@@ -25,6 +25,9 @@
 /* Begin PBXFileReference section */
 		B517AAA7202C500000E7D046 /* ProjectMix */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ProjectMix; sourceTree = BUILT_PRODUCTS_DIR; };
 		B517AAAA202C500000E7D046 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B517AABB202DA02000E7D046 /* Name.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Name.plist; sourceTree = "<group>"; };
+		B517AACD203175E000E7D046 /* LocalAPIList.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LocalAPIList.plist; sourceTree = "<group>"; };
+		B517AACE203175F600E7D046 /* NewAPIList.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = NewAPIList.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,9 @@
 			isa = PBXGroup;
 			children = (
 				B517AAAA202C500000E7D046 /* main.m */,
+				B517AABB202DA02000E7D046 /* Name.plist */,
+				B517AACD203175E000E7D046 /* LocalAPIList.plist */,
+				B517AACE203175F600E7D046 /* NewAPIList.plist */,
 			);
 			path = ProjectMix;
 			sourceTree = "<group>";

@@ -33,14 +33,16 @@ void replaceFileContend(NSString *sourceCodeDir,NSString *oldClassName,NSString 
 void creatApiToFile(NSString *sourceCodeDir,NSString *apiName, NSString *paramName,NSString *logName,NSString *filePath, BOOL isHfile);
 void deleteAllSpamCode(NSString *sourceCodeDir,NSString *prefix);
 void changePrefix(NSString *sourceCodeDir, NSArray<NSString *> *ignoreDirNames,NSString *oldName, NSString *newName);
+void writeToFile(NSString *apiName);
+void modifyApi(NSString *sourceCodeDir,NSString *oldName,NSString *newName);
+void changeAPIName(NSString *sourceCodeDir,NSString *oldName);
 NSString *gOutParameterName = nil;
 NSString *gSourceCodeDir = nil;
 NSInteger kLocalImageIndex = 0;
 NSInteger kSpamCount = 0;//每四个垃圾方法加参数
-NSInteger kPercent = 30;//百分之多少概率加密就写多少
+NSInteger kPercent = 101;//百分之多少概率加密就写多少
 NSInteger kImageCount = 0;
 NSInteger kfixImageCount = 0;
-
 
 #pragma mark - 公共方法
 
@@ -50,7 +52,7 @@ static const NSString *kRandomAlphabet = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJK
 ///递增命名本地图片资源，xcode中的图片名称不变
 NSString *randomString(NSInteger length) {
     //使用统一——背景名称
-    NSString *imageName = [NSString stringWithFormat:@"imageSource_%03ld",(long)kLocalImageIndex];
+    NSString *imageName = [NSString stringWithFormat:@"insEyeImageSource_%03ld",(long)kLocalImageIndex];
     kLocalImageIndex +=1;
     return imageName;
 }
@@ -259,9 +261,20 @@ int main(int argc, const char * argv[]) {
         
         if (needHandleXcassets) {
             @autoreleasepool {
-                handleXcassetsFiles(gSourceCodeDir);
+//                handleXcassetsFiles(gSourceCodeDir);
+                printf("正在修改API。。。");
+                deleteAllSpamCode(gSourceCodeDir,@"sp_");
             }
-            printf("修改 Xcassets 中的图片名称完成,一共有%d个图片文件，修改了%d个\n",kImageCount,kfixImageCount);
+            @autoreleasepool {
+                NSString *path = @"/Users/journeyyoung/GDIOSProjectMix/ProjectMix/LocalAPIList.plist";
+                NSMutableArray* points = [NSMutableArray arrayWithContentsOfFile:path];
+                for(int i = 0;i<points.count;i++){
+                    @autoreleasepool {
+                        changeAPIName(gSourceCodeDir,points[i]);
+                    }
+                }
+            }
+            printf("修改 Xcassets 中的图片名称完成,一共有%ld个图片文件，修改了%ld个\n",(long)kImageCount,(long)kfixImageCount);
         }
         if (needDeleteComments) {
             @autoreleasepool {
@@ -1070,7 +1083,6 @@ void modifyClassNamePrefix(NSMutableString *projectContent, NSString *sourceCode
 
 ///删除所有垃圾代码以"sp_"开头,前缀可自定义，只要不与本身方法重合就可以
 void deleteAllSpamCode(NSString *sourceCodeDir,NSString *prefix){
-    //获取所有以“h.m”为后缀的文件
     NSFileManager *fm = [NSFileManager defaultManager];
     
     // 遍历源代码文件 h 与 m 配对
@@ -1079,41 +1091,145 @@ void deleteAllSpamCode(NSString *sourceCodeDir,NSString *prefix){
     for (NSString *filePath in files) {
         NSString *path = [sourceCodeDir stringByAppendingPathComponent:filePath];
         if ([fm fileExistsAtPath:path isDirectory:&isDirectory] && isDirectory) {
-            deleteAllSpamCode(sourceCodeDir, prefix);
+            deleteAllSpamCode(path, prefix);
             continue;
         }
         
-        NSString *fileName = filePath.lastPathComponent.stringByDeletingPathExtension;
         NSString *fileExtension = filePath.pathExtension;
         if ([fileExtension isEqualToString:@"h"]) {
-            NSString *mFileName = [fileName stringByAppendingPathExtension:@"m"];
-            if ([files containsObject:mFileName]){
-                NSError *error = nil;
-                NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:&error];
-                if([fileContent containsString:prefix]){
-                    ///获取所有前缀的位置
-//                    NSMutableArray *rangeArray = [NSMutableArray array];
-//                    NSString*string1 = [string stringByAppendingString:subStr];
-//                    NSString *temp;
-//
-//                  for(int i =0; i < string.length; i ++) {
-//
-//                            temp = [string1substringWithRange:NSMakeRange(i, subStr.length)];
-//
-//                            if ([temp isEqualToString:subStr]) {
-//
-//                                      NSRange range = {i,subStr.length};
-//
-//                                      [rangeArray addObject: [NSValue valueWithRange:range]];
-//
-//                                }
-//
-//                      }
+            NSError *error = nil;
+            NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:[sourceCodeDir stringByAppendingPathComponent:filePath] encoding:NSUTF8StringEncoding error:&error];
+            if([fileContent containsString:prefix]){
+                ///用正则表达式匹配
+                //                    NSString *prefixString = @"sp_.*?:";
+                //                    NSString *prefixString = @"^ie_.*(\\;|\\:|\\{)$";
+                NSString *prefixString = @"ie_.*?:";
+                NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:prefixString options:NSRegularExpressionCaseInsensitive error:&error];
+                
+                NSArray<NSTextCheckingResult *> *result = [regex matchesInString:fileContent options:0 range:NSMakeRange(0, fileContent.length)];
+                if (result.count>0) {
+                    for (int i = 0; i<result.count; i++) {
+                        NSTextCheckingResult *res = result[i];
+                        
+                        //                            NSLog(@"str == %@", [fileContent substringWithRange:res.range]);
+                        @autoreleasepool {
+                            writeToFile([fileContent substringWithRange:res.range]);
+                        }
+                    }
+                }else{
+                    //                        NSLog(@"error == %@",error.description);
                 }
             }
         }
     }
 }
+
+void writeToFile(NSString *apiName){
+    NSString *path = @"/Users/journeyyoung/GDIOSProjectMix/ProjectMix/LocalAPIList.plist";
+    NSMutableArray* points = [NSMutableArray arrayWithContentsOfFile:path];
+    NSString *newName = [apiName stringByReplacingOccurrencesOfString:@":" withString:@""];
+    [points addObject:newName];
+    [points writeToFile:path atomically:YES];
+    
+}
+
+void changeAPIName(NSString *sourceCodeDir,NSString *oldName){
+    NSString *path1 = @"/Users/journeyyoung/GDIOSProjectMix/ProjectMix/Name.plist";
+    NSString *path2 = @"/Users/journeyyoung/GDIOSProjectMix/ProjectMix/NewAPIList.plist";
+    NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:path1];
+    NSMutableArray *newArr = [NSMutableArray arrayWithContentsOfFile:path2];
+    NSArray *arr1 = dic[@"firstArray"];
+    NSArray *arr2 = dic[@"secondArray"];
+    NSArray *arr3 = dic[@"thirdArray"];
+    NSArray *arr4 = dic[@"forthArray"];
+    NSArray *arr5 = dic[@"fifthArray"];
+    NSArray *arr6 = dic[@"sixthArray"];
+    NSString *newName;
+    while (1) {
+        NSInteger k1 = arc4random()%6;
+        NSInteger k2 = arc4random()%6;
+        NSInteger k3 = arc4random()%6;
+        NSInteger k4 = arc4random()%6;
+        NSInteger k5 = arc4random()%6;
+        NSInteger k6 = arc4random()%6;
+        newName = [NSString stringWithFormat:@"ie_%@%@%@%@%@%@",arr1[k1],arr2[k2],arr3[k3],arr4[k4],arr5[k5],arr6[k6]];
+        if(![newArr containsObject:newName]){
+            break;
+        }
+    }
+    [newArr addObject:newName];
+    [newArr writeToFile:path2 atomically:YES];
+    @autoreleasepool {
+        modifyApi(gSourceCodeDir, oldName, newName);
+    }
+}
+
+void modifyApi(NSString *sourceCodeDir,NSString *oldName,NSString *newName){
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    // 遍历源代码文件 h 与 m 配对
+    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:sourceCodeDir error:nil];
+    BOOL isDirectory;
+    for (NSString *filePath in files) {
+        NSString *path = [sourceCodeDir stringByAppendingPathComponent:filePath];
+        if ([fm fileExistsAtPath:path isDirectory:&isDirectory] && isDirectory) {
+            modifyApi(path, oldName, newName);
+            continue;
+        }
+        ///如果
+        NSString *fileName = filePath.lastPathComponent.stringByDeletingPathExtension;
+        NSString *fileExtension = filePath.pathExtension;
+        if ([fileExtension isEqualToString:@"h"]) {
+            ///概率修改
+            NSInteger k = arc4random()%100;
+//            if(k>kPercent){
+//                continue;
+//            }
+            NSString *mFileName = [fileName stringByAppendingPathExtension:@"m"];
+            NSString *mmFileName = [fileName stringByAppendingPathExtension:@"mm"];
+            NSString *hFilePath = [[sourceCodeDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"h"];
+            NSMutableString *hfileConten = [NSMutableString stringWithContentsOfFile:hFilePath encoding:NSUTF8StringEncoding error:nil];
+            if ([files containsObject:mFileName]){
+                NSString *hFilePath = [[sourceCodeDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"h"];
+                NSString *mFilePath = [[sourceCodeDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"m"];
+                NSError *error = nil;
+                NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:mFilePath encoding:NSUTF8StringEncoding error:&error];
+                if([fileContent containsString:oldName]){
+                    [fileContent replaceOccurrencesOfString:oldName withString:newName options:NSCaseInsensitiveSearch range:NSMakeRange(0, fileContent.length)];
+                    [fileContent writeToFile:mFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+                }
+                NSMutableString *hfileConten = [NSMutableString stringWithContentsOfFile:hFilePath encoding:NSUTF8StringEncoding error:nil];
+                if([hfileConten containsString:oldName]){
+                    [hfileConten replaceOccurrencesOfString:oldName withString:newName options:NSCaseInsensitiveSearch range:NSMakeRange(0, hfileConten.length)];
+                    [hfileConten writeToFile:hFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+                }
+            }
+            
+            else if ([files containsObject:mmFileName]){
+                NSString *hFilePath = [[sourceCodeDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"h"];
+                NSString *mFilePath = [[sourceCodeDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"mm"];
+                NSError *error = nil;
+                NSMutableString *fileContent = [NSMutableString stringWithContentsOfFile:mFilePath encoding:NSUTF8StringEncoding error:&error];
+                if([fileContent containsString:oldName]){
+                    [fileContent replaceOccurrencesOfString:oldName withString:newName options:NSCaseInsensitiveSearch range:NSMakeRange(0, fileContent.length)];
+                    [fileContent writeToFile:mFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+                }
+                NSMutableString *hfileConten = [NSMutableString stringWithContentsOfFile:hFilePath encoding:NSUTF8StringEncoding error:nil];
+                if([hfileConten containsString:oldName]){
+                    [hfileConten replaceOccurrencesOfString:oldName withString:newName options:NSCaseInsensitiveSearch range:NSMakeRange(0, hfileConten.length)];
+                    [hfileConten writeToFile:hFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+                }
+            }
+            else{
+                if([hfileConten containsString:oldName]){
+                    [hfileConten replaceOccurrencesOfString:oldName withString:newName options:NSCaseInsensitiveSearch range:NSMakeRange(0, hfileConten.length)];
+                    [hfileConten writeToFile:hFilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+                }
+            }
+        }
+    }
+}
+
 
 void changePrefix(NSString *sourceCodeDir, NSArray<NSString *> *ignoreDirNames,NSString *oldName, NSString *newName){
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -1124,9 +1240,10 @@ void changePrefix(NSString *sourceCodeDir, NSArray<NSString *> *ignoreDirNames,N
     for (NSString *filePath in files) {
         NSString *path = [sourceCodeDir stringByAppendingPathComponent:filePath];
         if ([fm fileExistsAtPath:path isDirectory:&isDirectory] && isDirectory) {
-            if (![ignoreDirNames containsObject:filePath]) {
-                changePrefix(path, ignoreDirNames, oldName, newName);
-            }
+//            if (![ignoreDirNames containsObject:filePath]) {
+//                changePrefix(path, ignoreDirNames, oldName, newName);
+//            }
+            changePrefix(path, ignoreDirNames, oldName, newName);
             continue;
         }
         
