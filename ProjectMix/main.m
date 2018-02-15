@@ -1125,6 +1125,10 @@ void deleteAllSpamCode(NSString *sourceCodeDir,NSString *prefix){
 }
 
 void writeToFile(NSString *apiName){
+    NSInteger k = arc4random()%100;
+    if(k>kPercent){
+        return;
+    }
     NSString *path = @"/Users/journeyyoung/GDIOSProjectMix/ProjectMix/LocalAPIList.plist";
     NSMutableArray* points = [NSMutableArray arrayWithContentsOfFile:path];
     NSString *newName = [apiName stringByReplacingOccurrencesOfString:@":" withString:@""];
@@ -1181,10 +1185,7 @@ void modifyApi(NSString *sourceCodeDir,NSString *oldName,NSString *newName){
         NSString *fileExtension = filePath.pathExtension;
         if ([fileExtension isEqualToString:@"h"]) {
             ///概率修改
-            NSInteger k = arc4random()%100;
-//            if(k>kPercent){
-//                continue;
-//            }
+            ///Attention,wo cant mix api for random action,bacacue if u want to change one api, you must replace all of it in project~
             NSString *mFileName = [fileName stringByAppendingPathExtension:@"m"];
             NSString *mmFileName = [fileName stringByAppendingPathExtension:@"mm"];
             NSString *hFilePath = [[sourceCodeDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:@"h"];
