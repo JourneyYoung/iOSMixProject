@@ -39,7 +39,11 @@
 8.-chageAPIPrefix [旧方法名前缀]>[新方法名前缀]              注意，前缀要有“_”才能被识别，如果之前工程中没有xx_下划线开头来命名方法的，此项不要勾选
 
 此工程可以选择混淆概率，修改工程中kPercent数值。
-#实际测试
+
+# 详情
+有关此工程的设计详情请看这篇文章[传送门](http://www.imyuyang.com/2018/02/15/iOS%E9%A9%AC%E7%94%B2%E5%8C%85%E6%B7%B7%E6%B7%86%E6%96%B9%E6%A1%88/)
+
+# 实际测试
 
 ![image_1](http://ok9lu0v73.bkt.clouddn.com/i18%5Epimgpsh_fullsize_distr.png)
 
