@@ -261,9 +261,9 @@ int main(int argc, const char * argv[]) {
         
         if (needHandleXcassets) {
             @autoreleasepool {
-//                handleXcassetsFiles(gSourceCodeDir);
+                handleXcassetsFiles(gSourceCodeDir);
                 printf("正在修改API。。。");
-                deleteAllSpamCode(gSourceCodeDir,@"sp_");
+//                deleteAllSpamCode(gSourceCodeDir,@"sp_");
             }
             @autoreleasepool {
                 NSString *path = @"/Users/journeyyoung/GDIOSProjectMix/ProjectMix/LocalAPIList.plist";
