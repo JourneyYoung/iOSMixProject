@@ -137,6 +137,7 @@ int main(int argc, const char * argv[]) {
         NSArray<NSString *> *ignoreDirNames = nil;
         BOOL needHandleXcassets = NO;
         BOOL needDeleteComments = NO;
+        BOOL needModifyAPIName = NO;
         NSString *oldProjectName = nil;
         NSString *newProjectName = nil;
         NSString *projectFilePath = nil;
@@ -257,24 +258,34 @@ int main(int argc, const char * argv[]) {
                 }
                 continue;
             }
+            if([argument isEqualToString:@"-modifyAPIName"]){
+                needModifyAPIName = YES;
+                continue;
+            }
         }
         
         if (needHandleXcassets) {
             @autoreleasepool {
                 handleXcassetsFiles(gSourceCodeDir);
-                printf("正在修改API。。。");
-//                deleteAllSpamCode(gSourceCodeDir,@"sp_");
+                printf("正在修改图片。。。");
             }
-            @autoreleasepool {
-                NSString *path = @"/Users/journeyyoung/GDIOSProjectMix/ProjectMix/LocalAPIList.plist";
-                NSMutableArray* points = [NSMutableArray arrayWithContentsOfFile:path];
-                for(int i = 0;i<points.count;i++){
-                    @autoreleasepool {
-                        changeAPIName(gSourceCodeDir,points[i]);
-                    }
-                }
-            }
+//            @autoreleasepool {
+//                NSString *path = @"/Users/journeyyoung/GDIOSProjectMix/ProjectMix/LocalAPIList.plist";
+//                NSMutableArray* points = [NSMutableArray arrayWithContentsOfFile:path];
+//                for(int i = 0;i<points.count;i++){
+//                    @autoreleasepool {
+//                        changeAPIName(gSourceCodeDir,points[i]);
+//                    }
+//                }
+//            }
             printf("修改 Xcassets 中的图片名称完成,一共有%ld个图片文件，修改了%ld个\n",(long)kImageCount,(long)kfixImageCount);
+        }
+        if (needModifyAPIName){
+            printf("正在修改api名称\n");
+             @autoreleasepool {
+                deleteAllSpamCode(gSourceCodeDir,@"sp_");
+             }
+            printf("修改api名称完成\n");
         }
         if (needDeleteComments) {
             @autoreleasepool {
@@ -283,6 +294,7 @@ int main(int argc, const char * argv[]) {
             printf("删除注释和空行完成\n");
         }
         if (oldProjectName && newProjectName) {
+            printf("正在修改工程名\n");
             @autoreleasepool {
                 NSString *dir = gSourceCodeDir.stringByDeletingLastPathComponent;
                 modifyProjectName(dir, oldProjectName, newProjectName);
@@ -1103,7 +1115,7 @@ void deleteAllSpamCode(NSString *sourceCodeDir,NSString *prefix){
                 ///用正则表达式匹配
                 //                    NSString *prefixString = @"sp_.*?:";
                 //                    NSString *prefixString = @"^ie_.*(\\;|\\:|\\{)$";
-                NSString *prefixString = @"ie_.*?:";
+                NSString *prefixString = @"ii_.*?:";
                 NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:prefixString options:NSRegularExpressionCaseInsensitive error:&error];
                 
                 NSArray<NSTextCheckingResult *> *result = [regex matchesInString:fileContent options:0 range:NSMakeRange(0, fileContent.length)];
@@ -1156,7 +1168,7 @@ void changeAPIName(NSString *sourceCodeDir,NSString *oldName){
         NSInteger k4 = arc4random()%6;
         NSInteger k5 = arc4random()%6;
         NSInteger k6 = arc4random()%6;
-        newName = [NSString stringWithFormat:@"ie_%@%@%@%@%@%@",arr1[k1],arr2[k2],arr3[k3],arr4[k4],arr5[k5],arr6[k6]];
+        newName = [NSString stringWithFormat:@"ii_%@%@%@%@%@%@",arr1[k1],arr2[k2],arr3[k3],arr4[k4],arr5[k5],arr6[k6]];
         if(![newArr containsObject:newName]){
             break;
         }
