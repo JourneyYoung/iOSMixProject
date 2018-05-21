@@ -1,6 +1,9 @@
 # iOSMixProject
 马甲包混淆工程
 
+# 5月更新。。
+苹果爸爸升级了机审机制，此脚本作用不大，我升级了混淆机制，鉴于伸手党太多，我就不开源了23333
+
 # 原工程地址
 首先感谢将此脚本初始脚本开源的大佬，但不太适合我们工程，于是我们在原有的轮子上加了几颗螺丝钉，仅供参考思路，奉上原仓库地址。
 注意看这里！原始代码仓库地址：[https://github.com/klaus01/KLGenerateSpamCode](https://github.com/klaus01/KLGenerateSpamCode)
