@@ -44,6 +44,7 @@ NSInteger kPercent = 101;//百分之多少概率加密就写多少
 NSInteger kImageCount = 0;
 NSInteger kfixImageCount = 0;
 
+
 #pragma mark - 公共方法
 
 static const NSString *kRandomAlphabet = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
