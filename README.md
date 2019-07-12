@@ -36,7 +36,7 @@
 
 和原来的轮子一样，先配置启动参数再运行，如图
 
-![image_0](http://ok9lu0v73.bkt.clouddn.com/6C05CE31-D951-4D90-81D3-0314EB267C9E.png)
+![image_0](http://puioc6h3a.bkt.clouddn.com/E02D60A5-1DA2-46A9-B759-AB29AEE7C096.png)
 参数解释：
 
 1.工程代码的绝对路径
